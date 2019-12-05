@@ -27,7 +27,7 @@
 void    usage(char *arg0)
 
 {
-    fprintf(stderr, "Usage: %s file.vcf file.hap sample-id\n", arg0);
+    fprintf(stderr, "Usage: %s sample-id [< VCF-input] [> HAP-output]\n", arg0);
     exit(EX_USAGE);
 }
 
@@ -38,30 +38,19 @@ int     main(int argc,char *argv[])
     extern int  errno;
     size_t  c,
 	    bytes_read;
-    FILE    *infile,
-	    *outfile1,
+    FILE    *infile = stdin,
+	    *outfile1 = stdout,
 	    *outfile2;
     char    vcf_line[MAX_LINE_LEN+1],
 	    buff[BUFF_SIZE+1],
 	    *fields[10],
 	    *p,
-	    *cwd;
+	    *cwd,
+	    *sample_id;
     
-    if ( argc != 4 )
+    if ( argc != 2 )
 	usage(argv[0]);
     
-    if ( (infile = fopen(argv[1], "r")) == NULL )
-    {
-	fprintf(stderr, "Cannot open %s: %s\n", argv[1], strerror(errno));
-	exit(EX_NOINPUT);
-    }
-    
-    if ( (outfile1 = fopen(argv[2], "w")) == NULL )
-    {
-	fprintf(stderr, "Cannot open %s: %s\n", argv[2], strerror(errno));
-	exit(EX_NOINPUT);
-    }
-
     /* Create a temporary file for haplo2 in the current directory */
     cwd = getcwd(NULL, 0);
     setenv("TMPDIR", cwd, 1);
@@ -69,8 +58,9 @@ int     main(int argc,char *argv[])
     outfile2 = tmpfile();
 
     /* Add headers */
-    fprintf(outfile1, "%s HAPLO1 ", argv[3]);
-    fprintf(outfile2, "%s HAPLO2 ", argv[3]);
+    sample_id = argv[1];
+    fprintf(outfile1, "%s HAPLO1 ", sample_id);
+    fprintf(outfile2, "%s HAPLO2 ", sample_id);
     
     while ( fgets(vcf_line, MAX_LINE_LEN, infile) != NULL )
     {
@@ -80,30 +70,37 @@ int     main(int argc,char *argv[])
 	    for (c = 0, p = vcf_line; c < 10; ++c)
 	    {
 		fields[c] = strsep(&p, "\t\n");
-		// printf("%zu '%s'\n", c, fields[c]);
+		//printf("%zu '%s'\n", c, fields[c]);
 	    }
 	    
+	    /*
+	     *  Using strstr assumes that strings like "0|0" only occur once
+	     *  per field.
+	     *  Might be better to locate the GT field in FORMAT and check
+	     *  only that position.
+	     */
+	    
 	    if ( (*fields[3] == '\0') || (*fields[4] == '\0') ||
-		strcmp(fields[9], ".|.") == 0 )
+		strstr(fields[9], ".|.") != NULL )
 	    {
 		/* Ignore lines with no data */
 	    }
-	    else if ( strcmp(fields[9], "0|0") == 0 )
+	    else if ( strstr(fields[9], "0|0") != NULL )
 	    {
 		putc(*fields[3], outfile1);
 		putc(*fields[3], outfile2);
 	    }
-	    else if ( strcmp(fields[9], "0|1") == 0 )
+	    else if ( strstr(fields[9], "0|1") != NULL )
 	    {
 		putc(*fields[3], outfile1);
 		putc(*fields[4], outfile2);
 	    }
-	    if ( strcmp(fields[9], "1|0") == 0 )
+	    else if ( strstr(fields[9], "1|0") != NULL )
 	    {
 		putc(*fields[4], outfile1);
 		putc(*fields[3], outfile2);
 	    }
-	    if ( strcmp(fields[9], "1|1") == 0 )
+	    else if ( strstr(fields[9], "1|1") != NULL )
 	    {
 		putc(*fields[4], outfile1);
 		putc(*fields[4], outfile2);
