@@ -157,7 +157,8 @@ realclean: clean
 install: all
 	${MKDIR} -p ${DESTDIR}${PREFIX}/bin ${DESTDIR}${PREFIX}/man/man1
 	${INSTALL} -s -m 0555 ${BIN} ${DESTDIR}${PREFIX}/bin
-	${INSTALL} -m 0444 ${MAN} ${DESTDIR}${MANPREFIX}/man/man1
+
+#${INSTALL} -m 0444 ${MAN} ${DESTDIR}${MANPREFIX}/man/man1
 
 ############################################################################
 # Remove all installed files
