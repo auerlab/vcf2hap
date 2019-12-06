@@ -74,33 +74,33 @@ int     main(int argc,char *argv[])
 	    }
 	    
 	    /*
-	     *  Using strstr assumes that strings like "0|0" only occur once
+	     *  Using strstr assumes that strings like "0/0" only occur once
 	     *  per field.
 	     *  Might be better to locate the GT field in FORMAT and check
 	     *  only that position.
 	     */
 	    
 	    if ( (*fields[3] == '\0') || (*fields[4] == '\0') ||
-		strstr(fields[9], ".|.") != NULL )
+		strstr(fields[9], "./.") != NULL )
 	    {
 		/* Ignore lines with no data */
 	    }
-	    else if ( strstr(fields[9], "0|0") != NULL )
+	    else if ( strstr(fields[9], "0/0") != NULL )
 	    {
 		putc(*fields[3], outfile1);
 		putc(*fields[3], outfile2);
 	    }
-	    else if ( strstr(fields[9], "0|1") != NULL )
+	    else if ( strstr(fields[9], "0/1") != NULL )
 	    {
 		putc(*fields[3], outfile1);
 		putc(*fields[4], outfile2);
 	    }
-	    else if ( strstr(fields[9], "1|0") != NULL )
+	    else if ( strstr(fields[9], "1/0") != NULL )
 	    {
 		putc(*fields[4], outfile1);
 		putc(*fields[3], outfile2);
 	    }
-	    else if ( strstr(fields[9], "1|1") != NULL )
+	    else if ( strstr(fields[9], "1/1") != NULL )
 	    {
 		putc(*fields[4], outfile1);
 		putc(*fields[4], outfile2);
