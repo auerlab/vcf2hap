@@ -20,6 +20,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
+#include <errno.h>
 
 #define MAX_LINE_LEN    4095
 #define BUFF_SIZE       16383
@@ -27,7 +29,7 @@
 void    usage(char *arg0)
 
 {
-    fprintf(stderr, "Usage: %s sample-id [< VCF-input] [> HAP-output]\n", arg0);
+    fprintf(stderr, "Usage: %s [--xz] sample-id [< VCF-input] [> HAP-output]\n", arg0);
     exit(EX_USAGE);
 }
 
@@ -35,34 +37,57 @@ void    usage(char *arg0)
 int     main(int argc,char *argv[])
 
 {
-    extern int  errno;
     size_t  c,
 	    bytes_read;
-    FILE    *infile = stdin,
-	    *outfile1 = stdout,
-	    *outfile2;
+    FILE    *vcf_stream = stdin,
+	    *hap_stream1 = stdout,
+	    *hap_stream2;
     char    vcf_line[MAX_LINE_LEN+1],
 	    buff[BUFF_SIZE+1],
 	    *fields[10],
 	    *p,
 	    *cwd,
 	    *sample_id;
+    bool    xz;
     
-    if ( argc != 2 )
-	usage(argv[0]);
+    switch(argc)
+    {
+	case    2:
+	    sample_id = argv[1];
+	    vcf_stream = stdin;
+	    break;
+	
+	case    3:
+	    if ( strcmp(argv[1], "--xz") == 0 )
+	    {
+		if ( (vcf_stream = popen("unxz -c", "r")) == NULL )
+		{
+		    fprintf(stderr, "%s: Cannot create unxz pipe: %s\n",
+			    argv[0], strerror(errno));
+		    exit(EX_NOINPUT);
+		}
+		sample_id = argv[2];
+	    }
+	    else
+		usage(argv[0]);
+	    break;
+	
+	default:
+	    usage(argv[0]);
+	    return EX_USAGE;
+    }
     
     /* Create a temporary file for haplo2 in the current directory */
     cwd = getcwd(NULL, 0);
     setenv("TMPDIR", cwd, 1);
     free(cwd);
-    outfile2 = tmpfile();
+    hap_stream2 = tmpfile();
 
     /* Add headers */
-    sample_id = argv[1];
-    fprintf(outfile1, "%s HAPLO1 ", sample_id);
-    fprintf(outfile2, "%s HAPLO2 ", sample_id);
+    fprintf(hap_stream1, "%s HAPLO1 ", sample_id);
+    fprintf(hap_stream2, "%s HAPLO2 ", sample_id);
     
-    while ( fgets(vcf_line, MAX_LINE_LEN, infile) != NULL )
+    while ( fgets(vcf_line, MAX_LINE_LEN, vcf_stream) != NULL )
     {
 	if ( ! (vcf_line[0] == '#') )
 	{
@@ -87,38 +112,38 @@ int     main(int argc,char *argv[])
 	    }
 	    else if ( strstr(fields[9], "0/0") != NULL )
 	    {
-		putc(*fields[3], outfile1);
-		putc(*fields[3], outfile2);
+		putc(*fields[3], hap_stream1);
+		putc(*fields[3], hap_stream2);
 	    }
 	    else if ( strstr(fields[9], "0/1") != NULL )
 	    {
-		putc(*fields[3], outfile1);
-		putc(*fields[4], outfile2);
+		putc(*fields[3], hap_stream1);
+		putc(*fields[4], hap_stream2);
 	    }
 	    else if ( strstr(fields[9], "1/0") != NULL )
 	    {
-		putc(*fields[4], outfile1);
-		putc(*fields[3], outfile2);
+		putc(*fields[4], hap_stream1);
+		putc(*fields[3], hap_stream2);
 	    }
 	    else if ( strstr(fields[9], "1/1") != NULL )
 	    {
-		putc(*fields[4], outfile1);
-		putc(*fields[4], outfile2);
+		putc(*fields[4], hap_stream1);
+		putc(*fields[4], hap_stream2);
 	    }
 	}
     }
-    fclose(infile);
+    fclose(vcf_stream);
     
     /* Separate line for each haplo */
-    putc('\n', outfile1);
-    putc('\n', outfile2);
+    putc('\n', hap_stream1);
+    putc('\n', hap_stream2);
     
     /* Append haplo2 line to haplo1 file */
-    rewind(outfile2);
-    while ( (bytes_read = fread(buff, 1, BUFF_SIZE, outfile2)) != 0 )
-	fwrite(buff, 1, bytes_read, outfile1);
+    rewind(hap_stream2);
+    while ( (bytes_read = fread(buff, 1, BUFF_SIZE, hap_stream2)) != 0 )
+	fwrite(buff, 1, bytes_read, hap_stream1);
     
-    fclose(outfile2);
-    fclose(outfile1);
+    fclose(hap_stream2);
+    fclose(hap_stream1);
     return EX_OK;
 }
