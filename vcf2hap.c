@@ -20,10 +20,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdbool.h>
 #include <errno.h>
 
-#define MAX_LINE_LEN    4095
+#define MAX_LINE_LEN    65536
 #define BUFF_SIZE       16383
 
 void    usage(char *arg0)
@@ -48,7 +47,6 @@ int     main(int argc,char *argv[])
 	    *p,
 	    *cwd,
 	    *sample_id;
-    bool    xz;
     
     switch(argc)
     {
@@ -69,7 +67,10 @@ int     main(int argc,char *argv[])
 		sample_id = argv[2];
 	    }
 	    else
+	    {
 		usage(argv[0]);
+		return EX_USAGE;    // Never reached, just to silence warning
+	    }
 	    break;
 	
 	default:
@@ -95,7 +96,7 @@ int     main(int argc,char *argv[])
 	    for (c = 0, p = vcf_line; c < 10; ++c)
 	    {
 		fields[c] = strsep(&p, "\t\n");
-		//printf("%zu '%s'\n", c, fields[c]);
+		//fprintf(stderr, "%zu '%s'\n", c, fields[c]);
 	    }
 	    
 	    /*
@@ -106,26 +107,26 @@ int     main(int argc,char *argv[])
 	     */
 	    
 	    if ( (*fields[3] == '\0') || (*fields[4] == '\0') ||
-		strstr(fields[9], "./.") != NULL )
+		strstr(fields[9], ".|.") != NULL )
 	    {
 		/* Ignore lines with no data */
 	    }
-	    else if ( strstr(fields[9], "0/0") != NULL )
+	    else if ( strstr(fields[9], "0|0") != NULL )
 	    {
 		putc(*fields[3], hap_stream1);
 		putc(*fields[3], hap_stream2);
 	    }
-	    else if ( strstr(fields[9], "0/1") != NULL )
+	    else if ( strstr(fields[9], "0|1") != NULL )
 	    {
 		putc(*fields[3], hap_stream1);
 		putc(*fields[4], hap_stream2);
 	    }
-	    else if ( strstr(fields[9], "1/0") != NULL )
+	    else if ( strstr(fields[9], "1|0") != NULL )
 	    {
 		putc(*fields[4], hap_stream1);
 		putc(*fields[3], hap_stream2);
 	    }
-	    else if ( strstr(fields[9], "1/1") != NULL )
+	    else if ( strstr(fields[9], "1|1") != NULL )
 	    {
 		putc(*fields[4], hap_stream1);
 		putc(*fields[4], hap_stream2);
