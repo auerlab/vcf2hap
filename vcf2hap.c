@@ -21,11 +21,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include "vcfio.h"
+#include "tsvio.h"
+#include "vcf2hap.h"
 
-#define MAX_LINE_LEN    65536
-#define BUFF_SIZE       16383
-
-void    usage(char *arg0)
+void    usage(const char *arg0)
 
 {
     fprintf(stderr, "Usage: %s [--xz] sample-id [< VCF-input] [> HAP-output]\n", arg0);
@@ -33,20 +33,18 @@ void    usage(char *arg0)
 }
 
 
-int     main(int argc,char *argv[])
+int     main(int argc,const char *argv[])
 
 {
-    size_t  c,
-	    bytes_read;
+    size_t  bytes_read;
+    int     ch;
     FILE    *vcf_stream = stdin,
 	    *hap_stream1 = stdout,
 	    *hap_stream2;
-    char    vcf_line[MAX_LINE_LEN+1],
-	    buff[BUFF_SIZE+1],
-	    *fields[10],
-	    *p,
-	    *cwd,
-	    *sample_id;
+    char    buff[BUFF_SIZE+1],
+	    *cwd;
+    const char  *sample_id;
+    vcf_call_t  vcf_call;
     
     switch(argc)
     {
@@ -88,16 +86,15 @@ int     main(int argc,char *argv[])
     fprintf(hap_stream1, "%s HAPLO1 ", sample_id);
     fprintf(hap_stream2, "%s HAPLO2 ", sample_id);
     
-    while ( fgets(vcf_line, MAX_LINE_LEN, vcf_stream) != NULL )
+    while ( (ch = getc(vcf_stream)) != EOF )
     {
-	if ( ! (vcf_line[0] == '#') )
+	if ( ch == '#' )
 	{
-	    /* Split line into separate fields */
-	    for (c = 0, p = vcf_line; c < 10; ++c)
-	    {
-		fields[c] = strsep(&p, "\t\n");
-		//fprintf(stderr, "%zu '%s'\n", c, fields[c]);
-	    }
+	    tsv_skip_rest_of_line(argv, vcf_stream);
+	}
+	else
+	{
+	    vcf_read_ss_call(argv, vcf_stream, &vcf_call);
 	    
 	    /*
 	     *  Using strstr assumes that strings like "0/0" only occur once
@@ -106,30 +103,30 @@ int     main(int argc,char *argv[])
 	     *  only that position.
 	     */
 	    
-	    if ( (*fields[3] == '\0') || (*fields[4] == '\0') ||
-		strstr(fields[9], ".|.") != NULL )
+	    if ( (*VCF_GET_REF(vcf_call) == '\0') || (*VCF_GET_ALT(vcf_call) == '\0') ||
+		strstr(vcf_call.samples[0], ".|.") != NULL )
 	    {
 		/* Ignore lines with no data */
 	    }
-	    else if ( strstr(fields[9], "0|0") != NULL )
+	    else if ( strstr(vcf_call.samples[0], "0|0") != NULL )
 	    {
-		putc(*fields[3], hap_stream1);
-		putc(*fields[3], hap_stream2);
+		putc(*VCF_GET_REF(vcf_call), hap_stream1);
+		putc(*VCF_GET_REF(vcf_call), hap_stream2);
 	    }
-	    else if ( strstr(fields[9], "0|1") != NULL )
+	    else if ( strstr(vcf_call.samples[0], "0|1") != NULL )
 	    {
-		putc(*fields[3], hap_stream1);
-		putc(*fields[4], hap_stream2);
+		putc(*VCF_GET_REF(vcf_call), hap_stream1);
+		putc(*VCF_GET_ALT(vcf_call), hap_stream2);
 	    }
-	    else if ( strstr(fields[9], "1|0") != NULL )
+	    else if ( strstr(vcf_call.samples[0], "1|0") != NULL )
 	    {
-		putc(*fields[4], hap_stream1);
-		putc(*fields[3], hap_stream2);
+		putc(*VCF_GET_ALT(vcf_call), hap_stream1);
+		putc(*VCF_GET_REF(vcf_call), hap_stream2);
 	    }
-	    else if ( strstr(fields[9], "1|1") != NULL )
+	    else if ( strstr(vcf_call.samples[0], "1|1") != NULL )
 	    {
-		putc(*fields[4], hap_stream1);
-		putc(*fields[4], hap_stream2);
+		putc(*VCF_GET_ALT(vcf_call), hap_stream1);
+		putc(*VCF_GET_ALT(vcf_call), hap_stream2);
 	    }
 	}
     }

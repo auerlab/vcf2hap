@@ -90,7 +90,7 @@ INCLUDES    += -I${LOCALBASE}/include
 CFLAGS      += ${INCLUDES}
 CXXFLAGS    += ${INCLUDES}
 FFLAGS      += ${INCLUDES}
-LDFLAGS     += -L${LOCALBASE}/lib
+LDFLAGS     += -L${LOCALBASE}/lib -lvcfio
 
 ############################################################################
 # Assume first command in PATH.  Override with full pathnames if necessary.
