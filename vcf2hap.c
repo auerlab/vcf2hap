@@ -94,39 +94,51 @@ int     main(int argc,const char *argv[])
 	}
 	else
 	{
-	    vcf_read_ss_call(argv, vcf_stream, &vcf_call);
-	    
-	    /*
-	     *  Using strstr assumes that strings like "0/0" only occur once
-	     *  per field.
-	     *  Might be better to locate the GT field in FORMAT and check
-	     *  only that position.
-	     */
-	    
-	    if ( (*VCF_GET_REF(vcf_call) == '\0') || (*VCF_GET_ALT(vcf_call) == '\0') ||
-		strstr(vcf_call.samples[0], ".|.") != NULL )
+	    ungetc(ch, vcf_stream);
+	    switch(vcf_read_ss_call(argv, vcf_stream, &vcf_call))
 	    {
-		/* Ignore lines with no data */
-	    }
-	    else if ( strstr(vcf_call.samples[0], "0|0") != NULL )
-	    {
-		putc(*VCF_GET_REF(vcf_call), hap_stream1);
-		putc(*VCF_GET_REF(vcf_call), hap_stream2);
-	    }
-	    else if ( strstr(vcf_call.samples[0], "0|1") != NULL )
-	    {
-		putc(*VCF_GET_REF(vcf_call), hap_stream1);
-		putc(*VCF_GET_ALT(vcf_call), hap_stream2);
-	    }
-	    else if ( strstr(vcf_call.samples[0], "1|0") != NULL )
-	    {
-		putc(*VCF_GET_ALT(vcf_call), hap_stream1);
-		putc(*VCF_GET_REF(vcf_call), hap_stream2);
-	    }
-	    else if ( strstr(vcf_call.samples[0], "1|1") != NULL )
-	    {
-		putc(*VCF_GET_ALT(vcf_call), hap_stream1);
-		putc(*VCF_GET_ALT(vcf_call), hap_stream2);
+		case    VCF_READ_OK:
+		    
+		    /*
+		     *  Using strstr assumes that strings like "0/0" only occur once
+		     *  per field.
+		     *  Might be better to locate the GT field in FORMAT and check
+		     *  only that position.
+		     */
+		    
+		    if ( (*VCF_GET_REF(vcf_call) == '\0') || (*VCF_GET_ALT(vcf_call) == '\0') ||
+			strstr(vcf_call.samples[0], ".|.") != NULL )
+		    {
+			/* Ignore lines with no data */
+		    }
+		    else if ( strstr(vcf_call.samples[0], "0|0") != NULL )
+		    {
+			putc(*VCF_GET_REF(vcf_call), hap_stream1);
+			putc(*VCF_GET_REF(vcf_call), hap_stream2);
+		    }
+		    else if ( strstr(vcf_call.samples[0], "0|1") != NULL )
+		    {
+			putc(*VCF_GET_REF(vcf_call), hap_stream1);
+			putc(*VCF_GET_ALT(vcf_call), hap_stream2);
+		    }
+		    else if ( strstr(vcf_call.samples[0], "1|0") != NULL )
+		    {
+			putc(*VCF_GET_ALT(vcf_call), hap_stream1);
+			putc(*VCF_GET_REF(vcf_call), hap_stream2);
+		    }
+		    else if ( strstr(vcf_call.samples[0], "1|1") != NULL )
+		    {
+			putc(*VCF_GET_ALT(vcf_call), hap_stream1);
+			putc(*VCF_GET_ALT(vcf_call), hap_stream2);
+		    }
+		    break;
+		    
+		case    VCF_READ_EOF:
+		    break;
+		
+		default:
+		    fprintf(stderr, "%s: Error reading VCF call.\n", argv[0]);
+		    exit(EX_DATAERR);
 	    }
 	}
     }
