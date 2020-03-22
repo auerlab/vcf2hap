@@ -90,7 +90,7 @@ int     main(int argc,const char *argv[])
     {
 	if ( ch == '#' )
 	{
-	    tsv_skip_rest_of_line(argv, vcf_stream);
+	    tsv_skip_rest_of_line(vcf_stream);
 	}
 	else
 	{
