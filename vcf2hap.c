@@ -45,6 +45,7 @@ int     main(int argc,const char *argv[])
 	    *cwd;
     const char  *sample_id;
     vcf_call_t  vcf_call;
+    char        vcf_sample[VCF_SAMPLE_MAX_CHARS + 1];
     
     switch(argc)
     {
@@ -95,7 +96,8 @@ int     main(int argc,const char *argv[])
 	else
 	{
 	    ungetc(ch, vcf_stream);
-	    switch(vcf_read_ss_call(vcf_stream, &vcf_call))
+	    switch(vcf_read_ss_call(vcf_stream, &vcf_call,
+				    vcf_sample, VCF_SAMPLE_MAX_CHARS))
 	    {
 		case    VCF_READ_OK:
 		    
