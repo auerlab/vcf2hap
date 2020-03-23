@@ -95,7 +95,7 @@ int     main(int argc,const char *argv[])
 	else
 	{
 	    ungetc(ch, vcf_stream);
-	    switch(vcf_read_ss_call(argv, vcf_stream, &vcf_call))
+	    switch(vcf_read_ss_call(vcf_stream, &vcf_call))
 	    {
 		case    VCF_READ_OK:
 		    
