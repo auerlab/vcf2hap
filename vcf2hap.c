@@ -108,30 +108,30 @@ int     main(int argc,const char *argv[])
 		     *  only that position.
 		     */
 		    
-		    if ( (*VCF_GET_REF(vcf_call) == '\0') || (*VCF_GET_ALT(vcf_call) == '\0') ||
-			strstr(vcf_call.samples[0], ".|.") != NULL )
+		    if ( (*VCF_REF(&vcf_call) == '\0') || (*VCF_ALT(&vcf_call) == '\0') ||
+			strstr(VCF_SAMPLE(&vcf_call, 0), ".|.") != NULL )
 		    {
 			/* Ignore lines with no data */
 		    }
-		    else if ( strstr(vcf_call.samples[0], "0|0") != NULL )
+		    else if ( strstr(VCF_SAMPLE(&vcf_call, 0), "0|0") != NULL )
 		    {
-			putc(*VCF_GET_REF(vcf_call), hap_stream1);
-			putc(*VCF_GET_REF(vcf_call), hap_stream2);
+			putc(*VCF_REF(&vcf_call), hap_stream1);
+			putc(*VCF_REF(&vcf_call), hap_stream2);
 		    }
-		    else if ( strstr(vcf_call.samples[0], "0|1") != NULL )
+		    else if ( strstr(VCF_SAMPLE(&vcf_call, 0), "0|1") != NULL )
 		    {
-			putc(*VCF_GET_REF(vcf_call), hap_stream1);
-			putc(*VCF_GET_ALT(vcf_call), hap_stream2);
+			putc(*VCF_REF(&vcf_call), hap_stream1);
+			putc(*VCF_ALT(&vcf_call), hap_stream2);
 		    }
-		    else if ( strstr(vcf_call.samples[0], "1|0") != NULL )
+		    else if ( strstr(VCF_SAMPLE(&vcf_call, 0), "1|0") != NULL )
 		    {
-			putc(*VCF_GET_ALT(vcf_call), hap_stream1);
-			putc(*VCF_GET_REF(vcf_call), hap_stream2);
+			putc(*VCF_ALT(&vcf_call), hap_stream1);
+			putc(*VCF_REF(&vcf_call), hap_stream2);
 		    }
-		    else if ( strstr(vcf_call.samples[0], "1|1") != NULL )
+		    else if ( strstr(VCF_SAMPLE(&vcf_call, 0), "1|1") != NULL )
 		    {
-			putc(*VCF_GET_ALT(vcf_call), hap_stream1);
-			putc(*VCF_GET_ALT(vcf_call), hap_stream2);
+			putc(*VCF_ALT(&vcf_call), hap_stream1);
+			putc(*VCF_ALT(&vcf_call), hap_stream2);
 		    }
 		    break;
 		    
