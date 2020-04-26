@@ -44,7 +44,6 @@ int     main(int argc,const char *argv[])
 	    *cwd;
     const char  *sample_id;
     vcf_call_t  vcf_call;
-    char        vcf_sample[VCF_SAMPLE_MAX_CHARS + 1];
     
     switch(argc)
     {
@@ -96,7 +95,7 @@ int     main(int argc,const char *argv[])
 	{
 	    ungetc(ch, vcf_stream);
 	    switch(vcf_read_ss_call(vcf_stream, &vcf_call,
-				    vcf_sample, VCF_SAMPLE_MAX_CHARS))
+				    VCF_SAMPLE_MAX_CHARS))
 	    {
 		case    VCF_READ_OK:
 		    
@@ -108,26 +107,26 @@ int     main(int argc,const char *argv[])
 		     */
 		    
 		    if ( (*VCF_REF(&vcf_call) == '\0') || (*VCF_ALT(&vcf_call) == '\0') ||
-			strstr(VCF_SAMPLE(&vcf_call, 0), ".|.") != NULL )
+			strstr(VCF_SINGLE_SAMPLE(&vcf_call), ".|.") != NULL )
 		    {
 			/* Ignore lines with no data */
 		    }
-		    else if ( strstr(VCF_SAMPLE(&vcf_call, 0), "0|0") != NULL )
+		    else if ( strstr(VCF_SINGLE_SAMPLE(&vcf_call), "0|0") != NULL )
 		    {
 			putc(*VCF_REF(&vcf_call), hap_stream1);
 			putc(*VCF_REF(&vcf_call), hap_stream2);
 		    }
-		    else if ( strstr(VCF_SAMPLE(&vcf_call, 0), "0|1") != NULL )
+		    else if ( strstr(VCF_SINGLE_SAMPLE(&vcf_call), "0|1") != NULL )
 		    {
 			putc(*VCF_REF(&vcf_call), hap_stream1);
 			putc(*VCF_ALT(&vcf_call), hap_stream2);
 		    }
-		    else if ( strstr(VCF_SAMPLE(&vcf_call, 0), "1|0") != NULL )
+		    else if ( strstr(VCF_SINGLE_SAMPLE(&vcf_call), "1|0") != NULL )
 		    {
 			putc(*VCF_ALT(&vcf_call), hap_stream1);
 			putc(*VCF_REF(&vcf_call), hap_stream2);
 		    }
-		    else if ( strstr(VCF_SAMPLE(&vcf_call, 0), "1|1") != NULL )
+		    else if ( strstr(VCF_SINGLE_SAMPLE(&vcf_call), "1|1") != NULL )
 		    {
 			putc(*VCF_ALT(&vcf_call), hap_stream1);
 			putc(*VCF_ALT(&vcf_call), hap_stream2);
