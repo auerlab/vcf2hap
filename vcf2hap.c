@@ -97,7 +97,7 @@ int     main(int argc,const char *argv[])
 	    switch(vcf_read_ss_call(vcf_stream, &vcf_call,
 				    VCF_SAMPLE_MAX_CHARS))
 	    {
-		case    VCF_READ_OK:
+		case    VCF_OK:
 		    
 		    /*
 		     *  Using strstr assumes that strings like "0/0" only occur once
