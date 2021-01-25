@@ -1,11 +1,7 @@
 /***************************************************************************
  *  Description:
- *      Generate a .hap file (for haplohseq) from a VCF
- *
- *  Arguments:
- *      1.  .vcf input file
- *      2.  .hap output
- *      3.  Sample ID (usually encoded in .vcf filename)
+ *      Generate a .hap file suitable for haplohseq from a phased VCF
+ *      Based on format_hap.py and roughly 19x faster
  *
  *  Returns:
  *      Standard sysexits

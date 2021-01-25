@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3.7
 
 # This script is the model on which vcf2hap is designed
 
@@ -27,22 +27,23 @@ with open(sys.argv[1]) as f:
                         # skip indels
                         if len(cols[3]) != 1 or len(cols[4]) != 1:
                                 continue
-                        elif  cols[9] == ".|.":
+                        genotype=cols[9]
+                        if genotype[0:3] == ".|.":
                                 continue
-                        elif cols[9] == "0|0":
+                        elif genotype[0:3] == "0|0":
                                 hap1.append(cols[3])
                                 hap2.append(cols[3])
-                        elif cols[9] == "0|1":
+                        elif genotype[0:3] == "0|1":
                                 hap1.append(cols[3])
                                 hap2.append(cols[4])
-                        elif cols[9] == "1|0":
+                        elif genotype[0:3] == "1|0":
                                 hap1.append(cols[4])
                                 hap2.append(cols[3])
-                        elif cols[9] == "1|1":
+                        elif genotype[0:3] == "1|1":
                                 hap1.append(cols[4])
                                 hap2.append(cols[4])
                         else:
-                                raise ValueError("unknown genotype = " + cols[9])
+                                raise ValueError("unknown genotype = " + genotype)
 f.close()
 
 # write haplotype strings to file
