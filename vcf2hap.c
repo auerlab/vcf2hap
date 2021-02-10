@@ -71,6 +71,9 @@ int     main(int argc,const char *argv[])
 	    return EX_USAGE;
     }
     
+    vcf_call_init(&vcf_call, VCF_INFO_MAX_CHARS, VCF_FORMAT_MAX_CHARS,
+		  VCF_SAMPLE_MAX_CHARS);
+    
     /* Create a temporary file for haplo2 in the current directory */
     cwd = getcwd(NULL, 0);
     setenv("TMPDIR", cwd, 1);
@@ -90,8 +93,7 @@ int     main(int argc,const char *argv[])
 	else
 	{
 	    ungetc(ch, vcf_stream);
-	    switch(vcf_read_ss_call(vcf_stream, &vcf_call,
-				    VCF_SAMPLE_MAX_CHARS))
+	    switch(vcf_read_ss_call(vcf_stream, &vcf_call))
 	    {
 		case    VCF_OK:
 		    
