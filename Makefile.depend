@@ -1,4 +1,4 @@
-vcf2hap.o: vcf2hap.c ../local/include/vcfio.h ../local/include/tsvio.h \
+vcf2hap.o: vcf2hap.c ../local/include/vcfio.h ../local/include/dsvio.h \
   vcf2hap.h vcf2hap-protos.h
 	${CC} -c ${CFLAGS} vcf2hap.c
 
