@@ -1,0 +1,52 @@
+.TH VCF2HAP 1
+.SH NAME    \" Section header
+.PP
+
+VCF2HAP \- Generate haplotype file from a VCF
+
+\" Convention:
+\" Underline anything that is typed verbatim - commands, etc.
+.SH SYNOPSIS
+.PP
+.nf 
+.na 
+vcf2hap [--xz] sample-ID < sample.vcf[.xz] > sample.hap
+bcftools view sample.bcf | vcf2hap sample-ID > sample.hap
+.ad
+.fi
+
+.SH OPTIONS
+.TP
+\fB\-\-xz
+VCF input is compressed with xz
+
+.SH "PURPOSE"
+
+.B vcf2hap
+is a simple tool for generating a .hap file as required by haplohseq from a
+VCF input, which is assumed to be phased.
+
+.SH "DESCRIPTION"
+
+The sample-ID provided on the command line is a arbitary string which will
+be included in the .hap output.
+
+Specify the --xz flag if the input is xz-compressed.
+
+.B vcf2hap
+is extremely fast (about 19 times faster than format_hap.py) and
+requires a trivial amount of memory regardless of the size of the VCF file.
+Performance is important as it is often necessary to haplotype tens of
+thousands of large VCF files.
+
+.SH "SEE ALSO"
+haplohseq, ad2vcf, vcf-split, biolibc
+
+.SH BUGS
+Please report bugs to the author and send patches in unified diff format.
+(man diff for more information)
+
+.SH AUTHOR
+.nf
+.na
+J. Bacon
