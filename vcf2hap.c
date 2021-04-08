@@ -95,7 +95,7 @@ int     main(int argc,const char *argv[])
 	    ungetc(ch, vcf_stream);
 	    switch(vcf_read_ss_call(vcf_stream, &vcf_call))
 	    {
-		case    VCF_OK:
+		case    BIO_READ_OK:
 		    
 		    /*
 		     *  Using strstr assumes that strings like "0/0" only occur once
@@ -131,7 +131,7 @@ int     main(int argc,const char *argv[])
 		    }
 		    break;
 		    
-		case    VCF_READ_EOF:
+		case    BIO_READ_EOF:
 		    break;
 		
 		default:
