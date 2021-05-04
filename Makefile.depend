@@ -1,5 +1,5 @@
 vcf2hap.o: vcf2hap.c ../local/include/vcfio.h ../local/include/dsvio.h \
- ../local/include/biolibc.h ../local/include/biostring.h vcf2hap.h \
- vcf2hap-protos.h
+  ../local/include/biolibc.h ../local/include/biostring.h vcf2hap.h \
+  vcf2hap-protos.h
 	${CC} -c ${CFLAGS} vcf2hap.c
 
