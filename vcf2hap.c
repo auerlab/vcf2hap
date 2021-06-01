@@ -17,7 +17,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
-#include <vcfio.h>
+#include <biolibc/vcf.h>
 #include "vcf2hap.h"
 
 void    usage(const char *arg0)
