@@ -93,7 +93,7 @@ int     main(int argc,const char *argv[])
 	else
 	{
 	    ungetc(ch, vcf_stream);
-	    switch(vcf_read_ss_call(vcf_stream, &vcf_call))
+	    switch(vcf_read_ss_call(vcf_stream, &vcf_call, VCF_FIELD_ALL))
 	    {
 		case    BIO_READ_OK:
 		    
