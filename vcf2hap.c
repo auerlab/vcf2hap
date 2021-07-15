@@ -39,7 +39,7 @@ int     main(int argc,const char *argv[])
     char    buff[BUFF_SIZE+1],
 	    *cwd;
     const char  *sample_id;
-    vcf_call_t  vcf_call;
+    bl_vcf_t  vcf_call;
     
     switch(argc)
     {
@@ -95,7 +95,7 @@ int     main(int argc,const char *argv[])
 	    ungetc(ch, vcf_stream);
 	    switch(vcf_read_ss_call(vcf_stream, &vcf_call, VCF_FIELD_ALL))
 	    {
-		case    BIO_READ_OK:
+		case    BL_READ_OK:
 		    
 		    /*
 		     *  Using strstr assumes that strings like "0/0" only occur once
@@ -131,7 +131,7 @@ int     main(int argc,const char *argv[])
 		    }
 		    break;
 		    
-		case    BIO_READ_EOF:
+		case    BL_READ_EOF:
 		    break;
 		
 		default:
