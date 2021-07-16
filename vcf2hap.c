@@ -71,8 +71,8 @@ int     main(int argc,const char *argv[])
 	    return EX_USAGE;
     }
     
-    vcf_call_init(&vcf_call, VCF_INFO_MAX_CHARS, VCF_FORMAT_MAX_CHARS,
-		  VCF_SAMPLE_MAX_CHARS);
+    vcf_call_init(&vcf_call, BL_VCF_INFO_MAX_CHARS, BL_VCF_FORMAT_MAX_CHARS,
+		  BL_VCF_SAMPLE_MAX_CHARS);
     
     /* Create a temporary file for haplo2 in the current directory */
     cwd = getcwd(NULL, 0);
@@ -93,7 +93,7 @@ int     main(int argc,const char *argv[])
 	else
 	{
 	    ungetc(ch, vcf_stream);
-	    switch(vcf_read_ss_call(vcf_stream, &vcf_call, VCF_FIELD_ALL))
+	    switch(vcf_read_ss_call(vcf_stream, &vcf_call, BL_VCF_FIELD_ALL))
 	    {
 		case    BL_READ_OK:
 		    
@@ -104,30 +104,30 @@ int     main(int argc,const char *argv[])
 		     *  only that position.
 		     */
 		    
-		    if ( (*VCF_REF(&vcf_call) == '\0') || (*VCF_ALT(&vcf_call) == '\0') ||
-			strstr(VCF_SINGLE_SAMPLE(&vcf_call), ".|.") != NULL )
+		    if ( (*BL_VCF_REF(&vcf_call) == '\0') || (*BL_VCF_ALT(&vcf_call) == '\0') ||
+			strstr(BL_VCF_SINGLE_SAMPLE(&vcf_call), ".|.") != NULL )
 		    {
 			/* Ignore lines with no data */
 		    }
-		    else if ( strstr(VCF_SINGLE_SAMPLE(&vcf_call), "0|0") != NULL )
+		    else if ( strstr(BL_VCF_SINGLE_SAMPLE(&vcf_call), "0|0") != NULL )
 		    {
-			putc(*VCF_REF(&vcf_call), hap_stream1);
-			putc(*VCF_REF(&vcf_call), hap_stream2);
+			putc(*BL_VCF_REF(&vcf_call), hap_stream1);
+			putc(*BL_VCF_REF(&vcf_call), hap_stream2);
 		    }
-		    else if ( strstr(VCF_SINGLE_SAMPLE(&vcf_call), "0|1") != NULL )
+		    else if ( strstr(BL_VCF_SINGLE_SAMPLE(&vcf_call), "0|1") != NULL )
 		    {
-			putc(*VCF_REF(&vcf_call), hap_stream1);
-			putc(*VCF_ALT(&vcf_call), hap_stream2);
+			putc(*BL_VCF_REF(&vcf_call), hap_stream1);
+			putc(*BL_VCF_ALT(&vcf_call), hap_stream2);
 		    }
-		    else if ( strstr(VCF_SINGLE_SAMPLE(&vcf_call), "1|0") != NULL )
+		    else if ( strstr(BL_VCF_SINGLE_SAMPLE(&vcf_call), "1|0") != NULL )
 		    {
-			putc(*VCF_ALT(&vcf_call), hap_stream1);
-			putc(*VCF_REF(&vcf_call), hap_stream2);
+			putc(*BL_VCF_ALT(&vcf_call), hap_stream1);
+			putc(*BL_VCF_REF(&vcf_call), hap_stream2);
 		    }
-		    else if ( strstr(VCF_SINGLE_SAMPLE(&vcf_call), "1|1") != NULL )
+		    else if ( strstr(BL_VCF_SINGLE_SAMPLE(&vcf_call), "1|1") != NULL )
 		    {
-			putc(*VCF_ALT(&vcf_call), hap_stream1);
-			putc(*VCF_ALT(&vcf_call), hap_stream2);
+			putc(*BL_VCF_ALT(&vcf_call), hap_stream1);
+			putc(*BL_VCF_ALT(&vcf_call), hap_stream2);
 		    }
 		    break;
 		    
