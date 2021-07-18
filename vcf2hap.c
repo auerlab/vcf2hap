@@ -71,7 +71,7 @@ int     main(int argc,const char *argv[])
 	    return EX_USAGE;
     }
     
-    bl_vcf_call_init(&vcf_call, BL_VCF_INFO_MAX_CHARS, BL_VCF_FORMAT_MAX_CHARS,
+    bl_vcf_init(&vcf_call, BL_VCF_INFO_MAX_CHARS, BL_VCF_FORMAT_MAX_CHARS,
 		  BL_VCF_SAMPLE_MAX_CHARS);
     
     /* Create a temporary file for haplo2 in the current directory */
