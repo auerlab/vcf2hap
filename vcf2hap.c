@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <biolibc/vcf.h>
+#include <xtend/dsv.h>
 #include "vcf2hap.h"
 
 void    usage(const char *arg0)
