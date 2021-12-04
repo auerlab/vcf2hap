@@ -21,10 +21,11 @@
 #include <xtend/dsv.h>
 #include "vcf2hap.h"
 
-void    usage(const char *arg0)
+void    usage(const char *argv[])
 
 {
-    fprintf(stderr, "Usage: %s [--xz] sample-id [< VCF-input] [> HAP-output]\n", arg0);
+    fprintf(stderr, "\nUsage: %s [--version]\n", argv[0]);
+    fprintf(stderr, "Usage: %s [--xz] sample-id [< VCF-input] [> HAP-output]\n", argv[0]);
     exit(EX_USAGE);
 }
 
@@ -41,6 +42,12 @@ int     main(int argc,const char *argv[])
 	    *cwd;
     const char  *sample_id;
     bl_vcf_t  vcf_call;
+    
+    if ( (argc == 2) && (strcmp(argv[1],"--version")) == 0 )
+    {
+	printf("%s\n", VERSION);
+	return EX_OK;
+    }
     
     switch(argc)
     {
@@ -62,14 +69,13 @@ int     main(int argc,const char *argv[])
 	    }
 	    else
 	    {
-		usage(argv[0]);
+		usage(argv);
 		return EX_USAGE;    // Never reached, just to silence warning
 	    }
 	    break;
 	
 	default:
-	    usage(argv[0]);
-	    return EX_USAGE;
+	    usage(argv);
     }
     
     bl_vcf_init(&vcf_call, BL_VCF_INFO_MAX_CHARS, BL_VCF_FORMAT_MAX_CHARS,

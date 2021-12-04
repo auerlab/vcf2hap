@@ -77,6 +77,7 @@ MANDIR      ?= ${MANPREFIX}/man
 # Defaults that should work with GCC and Clang.
 CC          ?= cc
 CFLAGS      ?= -Wall -g -O
+CFLAGS      += -DVERSION=\"`cat version.txt`\"
 
 # Link command:
 # Use ${FC} to link when mixing C and Fortran
@@ -115,7 +116,12 @@ INSTALL ?= install
 ############################################################################
 # Standard targets required by package managers
 
-all:    ${BIN}
+.PHONY: all depend clean realclean install install-strip help version.txt
+
+all:    ${BIN} version.txt
+
+version.txt:
+	test -e .git && git describe --tags > version.txt || true
 
 ${BIN}: ${OBJS}
 	${LD} -o ${BIN} ${OBJS} ${LDFLAGS}
