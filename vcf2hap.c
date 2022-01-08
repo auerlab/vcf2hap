@@ -100,7 +100,7 @@ int     main(int argc,const char *argv[])
 	else
 	{
 	    ungetc(ch, vcf_stream);
-	    switch(bl_vcf_read_ss_call(vcf_stream, &vcf_call, BL_VCF_FIELD_ALL))
+	    switch(bl_vcf_read_ss_call(&vcf_call, vcf_stream, BL_VCF_FIELD_ALL))
 	    {
 		case    BL_READ_OK:
 		    
