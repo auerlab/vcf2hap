@@ -48,7 +48,7 @@ int     main(int argc,const char *argv[])
 	printf("vcf2hap %s\n", VERSION);
 	return EX_OK;
     }
-    
+
     switch(argc)
     {
 	case    2:
@@ -66,6 +66,7 @@ int     main(int argc,const char *argv[])
 		    exit(EX_NOINPUT);
 		}
 		sample_id = argv[2];
+		fprintf(stderr, "%d %s\n", argc, sample_id);
 	    }
 	    else
 	    {
@@ -78,8 +79,7 @@ int     main(int argc,const char *argv[])
 	    usage(argv);
     }
     
-    bl_vcf_init(&vcf_call, BL_VCF_INFO_MAX_CHARS, BL_VCF_FORMAT_MAX_CHARS,
-		  BL_VCF_SAMPLE_MAX_CHARS);
+    bl_vcf_init(&vcf_call);
     
     /* Create a temporary file for haplo2 in the current directory */
     cwd = getcwd(NULL, 0);
