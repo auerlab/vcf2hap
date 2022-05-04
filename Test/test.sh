@@ -11,6 +11,7 @@ cd Test
 ../vcf2hap --xz generand < generand.vcf.xz > test-results.hap
 if diff -u generand-correct.hap test-results.hap; then
     printf "Test passed.\n"
+    rm test-results.hap
 else
     printf "Differences found, something is wrong.\n"
 fi
