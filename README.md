@@ -102,7 +102,7 @@ sbmake install clean clean-depends
 
 ### Building vcf2hap locally
 
-Below are cave man install instructions for development purposes, not
+Below are caveman install instructions for development purposes, not
 recommended for regular use.
 
 vcf2hap depends on [biolibc](https://github.com/auerlab/biolibc).
