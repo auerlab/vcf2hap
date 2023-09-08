@@ -103,3 +103,11 @@ source ~/Pkgsrc/pkg/etc/pkgsrc.sh   # Or pkgsrc.csh for csh or tcsh
 cd pkgsrc-dir/biology/vcf2hap
 sbmake install clean clean-depends
 ```
+
+## Instructions for packagers
+
+If you would like to add this project to another package manager
+rather than use FreeBSD ports or pkgsrc, basic manual build instructions
+for package can be found
+[here](https://github.com/outpaddling/Coding-Standards/blob/main/package.md).
+Your contribution is greatly appreciated!
