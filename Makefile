@@ -94,7 +94,7 @@ RANLIB      ?= ranlib
 
 INCLUDES    += -isystem ${PREFIX}/include -isystem ${LOCALBASE}/include
 CFLAGS      += ${INCLUDES}
-LDFLAGS     += -L{PREFIX}/lib -L${LOCALBASE}/lib -lbiolibc -lxtend
+LDFLAGS     += -L${PREFIX}/lib -L${LOCALBASE}/lib -lbiolibc -lxtend
 
 ############################################################################
 # Assume first command in PATH.  Override with full pathnames if necessary.
