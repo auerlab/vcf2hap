@@ -1,5 +1,3 @@
-vcf2hap.o: vcf2hap.c ../local/include/biolibc/vcf.h \
-  ../local/include/biolibc/sam.h ../local/include/biolibc/biolibc.h \
-  ../local/include/xtend/dsv.h vcf2hap.h vcf2hap-protos.h
+vcf2hap.o: vcf2hap.c vcf2hap.h vcf2hap-protos.h
 	${CC} -c ${CFLAGS} vcf2hap.c
 
