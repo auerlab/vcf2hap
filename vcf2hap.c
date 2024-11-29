@@ -45,7 +45,7 @@ int     main(int argc,const char *argv[])
     
     if ( (argc == 2) && (strcmp(argv[1],"--version")) == 0 )
     {
-	printf("vcf2hap %s\n", VERSION);
+	printf("%s %s\n", argv[0], VERSION);
 	return EX_OK;
     }
 
